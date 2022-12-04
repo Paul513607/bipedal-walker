@@ -8,9 +8,9 @@ import time
 
 from DeepQNetwork import DeepQNetwork
 
-EPIOSDES = 1000
-STEPS = 100
-RENDER = True
+EPIOSDES = 3000
+STEPS = 1000
+RENDER = False
 
 if __name__ == '__main__':
     env = gym.make("BipedalWalker-v3")
@@ -30,9 +30,13 @@ if __name__ == '__main__':
             agent.train(done, step)
             state = new_state
             if step % 10 == 0:
-                print(step)
+                pass
             if done:
                 break
         print(f"Episode: {episode}, Score: {score}, Epsilon: {agent.get_epsilon()}")
         agent.update_epsilon()
+        if episode == 2000:
+            RENDER = True
+        if (episode + 1) % 200 == 0:
+            agent.save_model(f"models/model_{episode + 1}.h5")
 
