@@ -5,6 +5,7 @@ import keras
 import numpy as np
 from keras import Sequential
 from keras.layers import Dense
+from keras.optimizers import Adam
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -40,7 +41,7 @@ class DeepQNetwork:
         model.add(Dense(24, input_dim=self.state_size, activation="relu"))
         model.add(Dense(24, activation="relu"))
         model.add(Dense(self.action_size, activation="linear"))
-        model.compile(loss="mse", optimizer='rmsprop', metrics=['accuracy'])
+        model.compile(loss="mse", optimizer=Adam(learning_rate=ALPHA), metrics=['accuracy'])
         return model
 
     def update_replay_memory(self, state, action, reward, new_state, done):
