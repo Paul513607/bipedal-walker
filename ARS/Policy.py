@@ -15,21 +15,21 @@ class Policy:
         self.num_best_deltas = num_best_deltas
         self.noise = noise
 
-    def evaluate(self, input, delta=None, direction=None):
+    def evaluate(self, input_data, delta=None, direction=None):
         if direction is None:
-            return self.theta.dot(input)
+            return self.theta.dot(input_data)
         elif direction == "+":
-            return (self.theta + self.noise * delta).dot(input)
+            return (self.theta + self.noise * delta).dot(input_data)
         elif direction == "-":
-            return (self.theta - self.noise * delta).dot(input)
+            return (self.theta - self.noise * delta).dot(input_data)
 
     def sample_deltas(self):
         return [np.random.randn(*self.theta.shape) for _ in range(self.num_deltas)]
 
     def update(self, rollouts, sigma_r):
         step = np.zeros(self.theta.shape)
-        for r_pos, r_neg, d in rollouts:
-            step += (r_pos - r_neg) * d
+        for r_pos, r_neg, delta in rollouts:
+            step += (r_pos - r_neg) * delta
         self.theta += self.learning_rate / (self.num_best_deltas * sigma_r) * step
 
     def save(self, filename):

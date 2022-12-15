@@ -43,19 +43,20 @@ class AugmentedRandomSearch:
         win = 0
         for step in range(0, max_steps):
             deltas = self.policy.sample_deltas()
-            positive_rewards = np.zeros(self.num_deltas)
-            negative_rewards = np.zeros(self.num_deltas)
+            rewards_for_plus = np.zeros(self.num_deltas)
+            rewards_for_minus = np.zeros(self.num_deltas)
 
             for k in range(self.num_deltas):
-                positive_rewards[k] = self.explore(env, max_episodes, direction="+", delta=deltas[k])
-                negative_rewards[k] = self.explore(env, max_episodes, direction="-", delta=deltas[k])
+                rewards_for_plus[k] = self.explore(env, max_episodes, direction="+", delta=deltas[k])
+                rewards_for_minus[k] = self.explore(env, max_episodes, direction="-", delta=deltas[k])
 
-            all_rewards = np.array(positive_rewards + negative_rewards)
-            sigma_r = all_rewards.std()
+            all_rewards = np.array(rewards_for_plus + rewards_for_minus)
+            sigma_r = np.sqrt(np.mean(all_rewards ** 2) - np.mean(all_rewards) ** 2)
 
-            scores = {k: max(r_pos, r_neg) for k, (r_pos, r_neg) in enumerate(zip(positive_rewards, negative_rewards))}
-            order = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)[:self.num_best_deltas]
-            rollouts = [(positive_rewards[k], negative_rewards[k], deltas[k]) for k in order]
+            scores = [(k, max(r_pos, r_neg)) for k, (r_pos, r_neg)
+                      in enumerate(zip(rewards_for_plus, rewards_for_minus))]
+            order = sorted(scores, key=lambda x: x[1], reverse=True)[:self.num_best_deltas]
+            rollouts = [(rewards_for_plus[k], rewards_for_minus[k], deltas[k]) for k in order]
 
             self.policy.update(rollouts, sigma_r)
 
