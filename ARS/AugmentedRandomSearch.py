@@ -39,7 +39,7 @@ class AugmentedRandomSearch:
             num_plays += 1
         return sum_rewards
 
-    def train(self, env, gamma, max_steps, max_episodes, print_every=10):
+    def train(self, env, max_steps, max_episodes, print_every=10):
         win = 0
         for step in range(0, max_steps):
             deltas = self.policy.sample_deltas()
