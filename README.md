@@ -1,8 +1,7 @@
 # bipedal-walker
 
 This is a simple implementation of the [BipedalWalker-v3](https://www.gymlibrary.dev/environments/box2d/bipedal_walker/) environment from OpenAI Gym. <br>
-The environment is solved using a simple neural network with 1 hidden layer. <br>
-For training, a deep Q-network is used. <br>
+We attempt to solve the environment using 3 algorithms: Augmented Random Search, Deep Deterministic Policy Gradient and a Deep Q-network. <br>
 
 ## Results
 
